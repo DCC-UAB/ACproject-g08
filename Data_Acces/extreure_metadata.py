@@ -1,8 +1,6 @@
 import pandas as pd 
-import numpy as np
-
-df1 = pd.read_csv('./Data/movies_metadata.csv')
-print(type(df1))
+import organizers
+import time
 
 def metadata_searcher(movieIds: list, df1):
     metadatas = {}
@@ -28,19 +26,23 @@ def metadata_searcher(movieIds: list, df1):
 
     return metadatas
 
-# metadata_searcher(['862', '21032', '', '31', '9598', 70], df1)
+if __name__ == "__main__":
+    df1 = pd.read_csv('./Data/movies_metadata.csv')
+    df2 = pd.read_csv("./Data/ratings.csv")
 
-def ratings_per_pelicula(dataset):
-    #Dataset -> Direcció del dataset
-    #Return -> Dict{MovieId: ratings_count}
-    ratings = pd.read_csv(dataset)
-    cuenta = {}
-    for index, row in ratings.iterrows():
-        movie = int(row["movieId"])
-        # if movie not in cuenta:
-        #     cuenta[movie] = 0
-        # cuenta[movie] += 1
-        cuenta[movie] = cuenta.get(movie, 0) + 1
-    return cuenta
+    start = time.time()
 
-# print(ratings_per_pelicula('./Data/ratings_small.csv'))
+    cuenta = organizers.ratings_organizer(organizers.rating_counter(df2))
+
+    lista = []
+    for ide in cuenta:
+        lista.append(str(ide[0]))
+
+    metadata_searcher(lista, df1)
+
+    end = time.time()
+    print(f"\n{end - start}")
+
+    # metadata_searcher(['862', '21032', '', '31', '9598', 70], df1)
+
+    # print(rating_counter('./Data/ratings_small.csv'))

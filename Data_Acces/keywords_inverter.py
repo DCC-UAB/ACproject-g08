@@ -36,4 +36,3 @@ with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer.writerow(value)
 
 print(f'El diccionario se ha guardado en {filename}')
-
