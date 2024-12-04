@@ -24,6 +24,20 @@ def rating_counter(df): # Usamos un dataset ya inicializado para normalizarlo a 
         cuenta[movie] = cuenta.get(movie, 0) + 1 # En vez de un if usamos la funcion get de los objetos diccionario
     return cuenta
 
+def rating_average(df): # Usamos un dataset ya inicializado para normalizarlo a las posibles futuras verisones del código
+    #df -> object Dataframe
+    #Return -> dict{MovieId: ratings_count}
+    cuenta = {}
+    ratings = {}
+    movies = list(df["movieId"]) # En vez de iterar filas y acceder a la columna iteramos sobre columna directamente
+    ratings_list = list(df["rating"])
+    for index, movie in enumerate(movies):
+        cuenta[movie] = cuenta.get(movie, 0) + 1
+        ratings[movie] = ratings.get(movie, 0) + ratings_list[index]
+    for movie in ratings:
+        ratings[movie] = ratings[movie] / cuenta[movie]
+    return ratings
+
 def ratings_organizer(data: dict, returns: int = 5): # Funcion auxiliar para ordenar y devolver el número de peliculas deseadas
     organized = list(sorted(data.items(), key= lambda x: x[1], reverse= True))
     while returns < 0: # Control de errores de usuario
@@ -76,11 +90,10 @@ def metadata_organizer(movieIds: list, df1):
 
 if __name__ == "__main__":
     df1 = pd.read_csv('./Data/movies_metadata.csv')
-    metadata_organizer(['862', '21032', '', '31', '9598', 70], df1)
-    
-    # ratings = pd.read_csv("./Data/ratings.csv")
-    # start = time.time()
+    # metadata_organizer(['862', '21032', '', '31', '9598', 70], df1)
+    ratings = pd.read_csv("./Data/ratings.csv")
+    start = time.time()
     # cuenta = ratings_organizer(rating_counter(ratings))
-    # end = time.time()
-    # print(cuenta)
-    # print(end - start)
+    cuenta = ratings_organizer(rating_average(ratings))
+    end = time.time()
+    print(end - start)
