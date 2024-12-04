@@ -3,6 +3,13 @@ import organizers
 import time
 
 def metadata_extractor(movieId: str, df1):
+    """
+    La funció retorna les metadades de una pel·lícula segons la seva ID
+
+    movieId --> ID de la pel·lícula de la que volem la metadata
+    df1 -> Pandas DataFrame que li passem a la funció per tal que hi pugui
+    cercar les metadates
+    """
     metadata = df1[df1['id'] == movieId]
 
     col_order = ['title', 'id', 'genres', 'popularity', 'release_date', 'vote_average', 'vote_count']

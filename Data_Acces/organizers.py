@@ -45,6 +45,14 @@ def ratings_organizer(data: dict, returns: int = 5): # Funcion auxiliar para ord
     return organized[:returns]
 
 def metadata_organizer(movieIds: list, df1):
+    """
+    La funció rep una llista de IDs de pel·lícues i retorna un diccionari
+    on la clau es la ID d'una pel·licula i el valor són les metadades de la pel·lícula.
+
+    movieIds --> Llista de IDs de les pel·lícules que volem extreure les metadades
+    df1 --> Pandas DataFrame on la funció realitza la cerca de les metadades
+    """
+    
     metadatas = {}
     if not isinstance(movieIds, list):
         print("Error: La entrada ha de ser una lista de IDs de pel·lícules.")
