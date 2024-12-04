@@ -1,5 +1,6 @@
 import pandas as pd
 import time
+from extreure_metadata import *
 
 # def ratings_per_pelicula(dataset):
 #     #Dataset -> Direcció del dataset
@@ -43,10 +44,35 @@ def ratings_organizer(data: dict, returns: int = 5): # Funcion auxiliar para ord
             returns = -2
     return organized[:returns]
 
+def metadata_organizer(movieIds: list, df1):
+    metadatas = {}
+    if not isinstance(movieIds, list):
+        print("Error: La entrada ha de ser una lista de IDs de pel·lícules.")
+        return None
+
+    for movieId in movieIds:
+        try:
+            metadata = metadata_extractor(movieId, df1)
+            metadatas[movieId] = metadata
+        except:
+            if type(movieId) == int:
+                print('Error: La ID de pel·lícula ha de ser format String (no Int)')   
+            elif len(movieId) > 0:    
+                print(f"Error: No s'ha pogut trobar metadata per la pel·lícula amb ID: {movieId}")
+            else:
+                print("Error: ID de pel·lícula nul no vàlid")
+        print()
+
+    return metadatas
+
+
 if __name__ == "__main__":
-    ratings = pd.read_csv("./Data/ratings.csv")
-    start = time.time()
-    cuenta = ratings_organizer(rating_counter(ratings))
-    end = time.time()
-    print(cuenta)
-    print(end - start)
+    df1 = pd.read_csv('./Data/movies_metadata.csv')
+    metadata_organizer(['862', '21032', '', '31', '9598', 70], df1)
+    
+    # ratings = pd.read_csv("./Data/ratings.csv")
+    # start = time.time()
+    # cuenta = ratings_organizer(rating_counter(ratings))
+    # end = time.time()
+    # print(cuenta)
+    # print(end - start)
