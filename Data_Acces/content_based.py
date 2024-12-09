@@ -55,7 +55,7 @@ def content_recommend(ratings, keywords, user, num):
             d = dice_coefficient(keywords_vista, keywords_no_vista)
             d = d * ratings_user[vista['id']]**(1/2) #Fem que el rating a la película vista importi pero no tant
             dists.append(d)
-        distancies[no_vista['id']] = (max(dists))
+        distancies[no_vista['id']] = max(dists)
 
     distancies_sort = dict(sorted(distancies.items(), key=lambda item: item[1], reverse = True))
     p_item = list(distancies_sort.items())
@@ -66,7 +66,7 @@ def content_recommend(ratings, keywords, user, num):
         recommendations.append(p_key[i])
     return recommendations
 
-# df1 = pd.read_csv('./Data/ratings_small.csv')
-# df2 = pd.read_csv('./Data/keywords.csv')
-# final = content_recommend(df1, df2, 1, 5)
-# print(final)
+df1 = pd.read_csv('./Data/ratings_small.csv')
+df2 = pd.read_csv('./Data/keywords.csv')
+final = content_recommend(df1, df2, 1, 5)
+print(final)
