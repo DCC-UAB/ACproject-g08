@@ -4,13 +4,11 @@ import numpy as np
 def rate_usuari(df, user = 1):
     #Retorna els IDs de totes les películes que l'usuari ha donat rating
     assert user in df['userId'], "User not in database"
-    ids = list(df1["userId"])
+    ids = list(df["userId"])
     ratings = {}
-    movies = []
     for index, id in enumerate(ids):
         if id == user:
-            movies.append(df1["movieId"][index])
-            ratings[df1["movieId"][index]] = df1["rating"][index]
+            ratings[df["movieId"][index]] = df["rating"][index]
     return ratings
 
 def dice_coefficient(n1, n2):
@@ -19,25 +17,56 @@ def dice_coefficient(n1, n2):
     for keyword in n2:
         if keyword in n2:
             inter += 1
-    dist = inter / (len(n1) + len(n2))
+    dist = 2 * inter / (len(n1) + len(n2))
     return dist
 
-def keyword_list(movie, file):
+def keyword_list(movie, df):
     #Reb ID de movie i retorna la llista de keywords
-    df = pd.read_csv(file)
     a = df[df['id'] == movie]["keywords"] #Extreure el string de la columna keywords
     b = eval(a[0]) #Passar string al format adeqüat (llista de diccionaris)
     keywords = list(x['name'] for x in b)
     return keywords
 
-df1 = pd.read_csv('./Data/ratings_small.csv')
-df2 = pd.read_csv('./Data/keywords.csv')
+def content_recommend(ratings, keywords, user, num):
+    # ratings -> df amb els ratings
+    # keywords -> df amb les keywords
+    # user -> usuari al que fer la recomanació
+    # num -> número de recomanacions
+    # Retorna els IDs de les num películes més recomanades
+    ratings_user = rate_usuari(ratings, user)
+    movies = list(ratings_user.keys())
+    movies_valides = keywords[keywords['id'].isin(movies)] #Ens quedem amb les películes vistes que estiguin a l'arxiu keywords
+    rest = keywords[~keywords['id'].isin(movies)]
+    distancies = {}
 
-ratings = rate_usuari(df1)
-movies = list(ratings.keys())
+    for index, no_vista in rest.iterrows():
+        # print()
+        # print(no_vista['id'])
+        filtro = eval(no_vista['keywords'])
+        keywords_no_vista = list(x['name'] for x in filtro)
+        # print(keywords_no_vista)
+        dists = []
+        for index, vista in movies_valides.iterrows(): #Fem la distància de la película no vista amb cada película vista
+            # print()
+            # print(x['id'], ":", ratings[x['id']])
+            filtro2 = eval(vista['keywords'])
+            keywords_vista = list(x['name'] for x in filtro2)
+            # print(keywords)
+            d = dice_coefficient(keywords_vista, keywords_no_vista)
+            d = d * ratings_user[vista['id']]**(1/2) #Fem que el rating a la película vista importi pero no tant
+            dists.append(d)
+        distancies[no_vista['id']] = (max(dists))
 
-filter = df2[df2['id'].isin(movies)] #Agafa els IDs de les películes vistes per l'usuari que estiguin a l'arxiu keywords
-rest = df2[~df2['id'].isin(movies)] #Agafa els IDs de les películes NO vistes per l'ususari que estiguin a l'arxiu keywords
-print(movies)
-print(filter)
-print(rest.iloc[2297]) #Agafa la línia 2297, utilitzada per comprobar si el 2297 estaba aquí, no està perquè mostra el 2298
+    distancies_sort = dict(sorted(distancies.items(), key=lambda item: item[1], reverse = True))
+    p_item = list(distancies_sort.items())
+    p_key = list(distancies_sort.keys())
+
+    recommendations = []
+    for i in range(num):
+        recommendations.append(p_key[i])
+    return recommendations
+
+# df1 = pd.read_csv('./Data/ratings_small.csv')
+# df2 = pd.read_csv('./Data/keywords.csv')
+# final = content_recommend(df1, df2, 1, 5)
+# print(final)
