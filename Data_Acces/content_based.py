@@ -13,10 +13,28 @@ def rate_usuari(df, user = 1):
             ratings[df1["movieId"][index]] = df1["rating"][index]
     return ratings
 
+def dice_coefficient(n1, n2):
+    #Reb dues llistes de keywords i retorna el dice coefficient
+    inter = 0 #Intersecció
+    for keyword in n2:
+        if keyword in n2:
+            inter += 1
+    dist = inter / (len(n1) + len(n2))
+    return dist
+
+def keyword_list(movie, file):
+    #Reb ID de movie i retorna la llista de keywords
+    df = pd.read_csv(file)
+    a = df[df['id'] == movie]["keywords"] #Extreure el string de la columna keywords
+    b = eval(a[0]) #Passar string al format adeqüat (llista de diccionaris)
+    keywords = list(x['name'] for x in b)
+    return keywords
+
 df1 = pd.read_csv('./Data/ratings_small.csv')
 df2 = pd.read_csv('./Data/keywords.csv')
 
-movies = rate_usuari(df1)
+ratings = rate_usuari(df1)
+movies = list(ratings.keys())
 
 filter = df2[df2['id'].isin(movies)] #Agafa els IDs de les películes vistes per l'usuari que estiguin a l'arxiu keywords
 rest = df2[~df2['id'].isin(movies)] #Agafa els IDs de les películes NO vistes per l'ususari que estiguin a l'arxiu keywords
