@@ -15,8 +15,6 @@ def clean_empty_keywords():
             if len(eval(fila[1])) > 0:  # Elimina espacios en blanco de la lista de palabras clave
                 escritor.writerow(fila)
 
-
-
 # 2. Netejar pelicules sense keywords
 def clean_ratings():
     ratings = pd.read_csv('./Data/ratings.csv')
@@ -28,7 +26,23 @@ def clean_ratings():
     
     # Guardar el DataFrame filtrado en un nuevo CSV
     ddf_filtrado.to_csv('./Data/content_ratings.csv', index=False)
+
+# 3. Netejar les movieId de keywords no presents a ratings
+def clean_keywords():
+    keywords = pd.read_csv('./Data/content_keywords.csv')
+    ratings = pd.read_csv('./Data/content_ratings.csv')
+    ids = list(keywords['id'])
+    mids = list(ratings['movieId'])
+    mids = set(mids)
+    eliminadas = []
+    for ide in ids:
+        if ide not in mids:
+            eliminadas.append(ide)
+    keyword_filtrado = keywords[~keywords['id'].isin(eliminadas)]
+    keyword_filtrado.to_csv('./Data/clean_content_keywords.csv', index=False)
+
 if __name__ == '__main__':
     # clean_empty_keywords()
     # clean_ratings()
+    clean_keywords()
     pass
