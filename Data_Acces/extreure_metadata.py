@@ -23,7 +23,7 @@ def metadata_extractor(movieId: str, df1):
 
 if __name__ == "__main__":
     df1 = pd.read_csv('./Data/movies_metadata.csv')
-    df2 = pd.read_csv("./Data/ratings.csv")
+    df2 = pd.read_csv('./Data/ratings.csv')
 
     # start = time.time()
 
