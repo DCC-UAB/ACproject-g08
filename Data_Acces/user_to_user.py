@@ -10,7 +10,7 @@ def recommend_movies(active_user, user_movie_matrix, user_similarity_df, n_recom
     
     return recommendations.head(n_recommendations)
 
-def calculate_similarity_matrix(user_movie_matrix):
+def calculate_user_similarity_matrix(user_movie_matrix):
     """
     Calcula la matriu de similitut cosinus entre els usuaris (només es tenen en compte
     les pel·lícules que ambdós usuaris han puntuat).
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     )
     user_movie_matrix_filled = user_movie_matrix.fillna(0)
 
-    user_similarity_matrix = calculate_similarity_matrix(user_movie_matrix_filled)
+    user_similarity_matrix = calculate_user_similarity_matrix(user_movie_matrix_filled)
     user_similarity_df = pd.DataFrame(user_similarity_matrix, index=user_movie_matrix_filled.index, columns=user_movie_matrix_filled.index)
 
     active_user = 2 # Cambiar per l'usuari desitjat
