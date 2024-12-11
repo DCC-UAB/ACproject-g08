@@ -3,16 +3,16 @@ import numpy as np
 
 # Calcular la Adjusted Cosine Similarity
 def adjusted_cosine_similarity(matrix):
-    # Calcular el promedio por usuario (filas)
+    # Calcular la mitja per usuari (files)
     user_means = matrix.mean(axis=1)
     
-    # Centrar las calificaciones por usuario
+    # Centrar els ratings per usuari
     centered_matrix = matrix.sub(user_means, axis=0)
     
-    # Calcular similitud ajustada coseno entre películas (columnas)
+    # Calcular similitud ajustada cosinus entre pel·lícules (columnes)
     similarity = np.dot(centered_matrix.T, centered_matrix)
     
-    # Calcular las normas de las columnas
+    # Calcular les normes de les columnes
     norms = np.sqrt(np.sum(centered_matrix**2, axis=0))  # Normas por columna
     norms_matrix = np.outer(norms, norms)
     
