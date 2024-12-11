@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import time 
 
 def rate_usuari(df, user = 1):
     #Retorna els IDs de totes les películes que l'usuari ha donat rating
@@ -14,10 +15,10 @@ def rate_usuari(df, user = 1):
 def dice_coefficient(n1, n2):
     #Reb dues llistes de keywords i retorna el dice coefficient
     inter = 0 #Intersecció
-    for keyword in n2:
+    for keyword in n1:
         if keyword in n2:
             inter += 1
-    dist = 2 * inter / (len(n1) + len(n2))
+    dist = (2 * inter) / (len(n1) + len(n2))
     return dist
 
 def keyword_list(movie, df):
@@ -66,7 +67,8 @@ def content_recommend(ratings, keywords, user, num):
         recommendations.append(p_key[i])
     return recommendations
 
-df1 = pd.read_csv('./Data/ratings_small.csv')
-df2 = pd.read_csv('./Data/keywords.csv')
+df1 = pd.read_csv('./Data/ratings.csv')
+df2 = pd.read_csv('./Data/content_keywords.csv')
 final = content_recommend(df1, df2, 1, 5)
 print(final)
+[44284, 52856, 11017, 218473, 23637]
