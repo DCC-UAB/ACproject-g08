@@ -1,0 +1,2 @@
+- Los prints han de estar escritos en catalán
+- Las pruebas de cada archivo de código han de estar controladas para que solo se ejecuten cuando el script sea el main para evitar problemas con las importaciones
