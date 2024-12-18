@@ -67,6 +67,44 @@ def content_recommend(ratings, keywords, user, num):
         recommendations.append(p_key[i])
     return recommendations
 
+def content_recommend_basic(ratings, keywords, user, num):
+    # ratings -> df amb els ratings
+    # keywords -> df amb les keywords
+    # user -> usuari al que fer la recomanació
+    # num -> número de recomanacions
+    # Retorna els IDs de les num películes més recomanades en base a NOMÉS la similitud a películes ja vistes per l'usuari
+    ratings_user = rate_usuari(ratings, user)
+    movies = list(ratings_user.keys())
+    movies_valides = keywords[keywords['id'].isin(movies)] #Ens quedem amb les películes vistes que estiguin a l'arxiu keywords
+    rest = keywords[~keywords['id'].isin(movies)]
+    distancies = {}
+
+    for index, no_vista in rest.iterrows():
+        # print()
+        # print(no_vista['id'])
+        filtro = eval(no_vista['keywords'])
+        keywords_no_vista = list(x['name'] for x in filtro)
+        # print(keywords_no_vista)
+        dists = []
+        for index, vista in movies_valides.iterrows(): #Fem la distància de la película no vista amb cada película vista
+            # print()
+            # print(x['id'], ":", ratings[x['id']])
+            filtro2 = eval(vista['keywords'])
+            keywords_vista = list(x['name'] for x in filtro2)
+            # print(keywords)
+            d = dice_coefficient(keywords_vista, keywords_no_vista)
+            dists.append(d)
+        distancies[no_vista['id']] = max(dists)
+
+    distancies_sort = dict(sorted(distancies.items(), key=lambda item: item[1], reverse = True))
+    p_item = list(distancies_sort.items())
+    p_key = list(distancies_sort.keys())
+
+    recommendations = []
+    for i in range(num):
+        recommendations.append(p_key[i])
+    return recommendations
+
 df1 = pd.read_csv('./Data/ratings.csv')
 df2 = pd.read_csv('./Data/content_keywords.csv')
 final = content_recommend(df1, df2, 1, 5)
