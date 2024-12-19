@@ -63,11 +63,21 @@ def content_recommend(ratings, keywords, user, num):
     distancies_sort = dict(sorted(distancies.items(), key=lambda item: item[1], reverse = True))
     p_item = list(distancies_sort.items())
     p_key = list(distancies_sort.keys())
+    
+    a = list(item[1] for item in p_item)
+    mini = min(a)
+    maxi = max(a)
+    final = []
+    for peli, puntuacio in p_item:
+        normalitzat = (puntuacio - mini) / (maxi - mini) * 5
+        final.append([peli, normalitzat])
 
-    recommendations = []
-    for i in range(num):
-        recommendations.append(p_key[i])
-    return recommendations
+    # recommendations = []
+    # for i in range(num):
+    #     recommendations.append(p_key[i])
+    # return recommendations
+
+    return final[:num]
 
 def content_recommend_basic(ratings, keywords, user, num):
     # ratings -> df amb els ratings
@@ -101,11 +111,21 @@ def content_recommend_basic(ratings, keywords, user, num):
     distancies_sort = dict(sorted(distancies.items(), key=lambda item: item[1], reverse = True))
     p_item = list(distancies_sort.items())
     p_key = list(distancies_sort.keys())
+    
+    a = list(item[1] for item in p_item)
+    mini = min(a)
+    maxi = max(a)
+    final = []
+    for peli, puntuacio in p_item:
+        normalitzat = (puntuacio - mini) / (maxi - mini) * 5
+        final.append([peli, normalitzat])
 
-    recommendations = []
-    for i in range(num):
-        recommendations.append(p_key[i])
-    return recommendations
+    # recommendations = []
+    # for i in range(num):
+    #     recommendations.append(p_key[i])
+    # return recommendations
+
+    return final[:num]
 
 def content_recommend_genres(ratings, keywords, user, num):
     # ratings -> df amb els ratings
@@ -145,11 +165,21 @@ def content_recommend_genres(ratings, keywords, user, num):
     distancies_sort = dict(sorted(distancies.items(), key=lambda item: item[1], reverse = True))
     p_item = list(distancies_sort.items())
     p_key = list(distancies_sort.keys())
+    
+    a = list(item[1] for item in p_item)
+    mini = min(a)
+    maxi = max(a)
+    final = []
+    for peli, puntuacio in p_item:
+        normalitzat = (puntuacio - mini) / (maxi - mini) * 5
+        final.append([peli, normalitzat])
 
-    recommendations = []
-    for i in range(num):
-        recommendations.append(p_key[i])
-    return recommendations
+    # recommendations = []
+    # for i in range(num):
+    #     recommendations.append(p_key[i])
+    # return recommendations
+
+    return final[:num]
 
 def content_recommend_genres_basic(ratings, keywords, user, num):
     # ratings -> df amb els ratings
@@ -190,11 +220,21 @@ def content_recommend_genres_basic(ratings, keywords, user, num):
     #print(distancies_sort)
     p_item = list(distancies_sort.items())
     p_key = list(distancies_sort.keys())
+    
+    a = list(item[1] for item in p_item)
+    mini = min(a)
+    maxi = max(a)
+    final = []
+    for peli, puntuacio in p_item:
+        normalitzat = (puntuacio - mini) / (maxi - mini) * 5
+        final.append([peli, normalitzat])
 
-    recommendations = []
-    for i in range(num):
-        recommendations.append(p_key[i])
-    return recommendations
+    # recommendations = []
+    # for i in range(num):
+    #     recommendations.append(p_key[i])
+    # return recommendations
+
+    return final[:num]
 
 u = 0
 n = 10
@@ -250,3 +290,61 @@ print(final)
 # [4729, 607, 15247, 46886, 251797, 4893, 433878, 3146, 34388, 31586]
 # [607, 15247, 34388, 11595, 13257, 27440, 26147, 29959, 43015, 965]
 # [4729, 607, 15247, 34388, 11595, 11915, 13257, 27440, 220029, 26147]
+
+#Normalitzat per a valors entre 0 i 5:
+# [[607, 5.0], [15247, 4.333333333333332], [251797, 4.333333333333332], [433878, 4.333333333333332], [3146, 3.8235294117647056], [34388, 3.421052631578947], [31586, 3.2499999999999996], [81367, 3.2499999999999996], [29968, 3.2499999999999996], [57240, 3.2499999999999996]]
+# [[4729, 5.0], [607, 3.8461538461538463], [15247, 3.333333333333333], [46886, 3.333333333333333], [251797, 3.333333333333333], [4893, 3.333333333333333], [433878, 3.333333333333333], [3146, 2.9411764705882355], [34388, 2.631578947368421], [31586, 2.5]]
+# [[607, 5.0], [15247, 4.7740112994350286], [34388, 4.464763603925067], [11595, 4.186440677966102], [13257, 4.1063174114021574], [27440, 4.1063174114021574], [26147, 4.1063174114021574], [29959, 4.082751744765703], [43015, 4.082751744765703], [965, 4.03954802259887]]
+# [[4729, 5.0], [607, 4.538461538461538], [15247, 4.333333333333333], [34388, 4.052631578947368], [11595, 3.8], [11915, 3.8], [13257, 3.7272727272727275], [27440, 3.7272727272727275], [220029, 3.7272727272727275], [26147, 3.7272727272727275]]
+
+# Metadades per a la pel·lícula amb ID 607 (Recomanació 1):
+# Títol: Men in Black
+# ID: 607
+# Gèneres: [{'id': 28, 'name': 'Action'}, {'id': 12, 'name': 'Adventure'}, {'id': 35, 'name': 'Comedy'}, {'id': 878, 'name': 'Science Fiction'}]
+
+# Metadades per a la pel·lícula amb ID 15247 (Recomanació 2):
+# Títol: The Ipcress File
+# ID: 15247
+# Gèneres: [{'id': 53, 'name': 'Thriller'}]
+
+# Metadades per a la pel·lícula amb ID 251797 (Recomanació 3):
+# Títol: The Unknown Woman
+# ID: 251797
+# Gèneres: [{'id': 99, 'name': 'Documentary'}]
+
+# Metadades per a la pel·lícula amb ID 433878 (Recomanació 4):
+# Títol: The Mars Generation
+# ID: 433878
+# Gèneres: [{'id': 99, 'name': 'Documentary'}]
+
+# Metadades per a la pel·lícula amb ID 3146 (Recomanació 5):
+# Títol: The War of the Gargantuas
+# ID: 3146
+# Gèneres: [{'id': 28, 'name': 'Action'}, {'id': 27, 'name': 'Horror'}, {'id': 878, 'name': 'Science Fiction'}]
+
+# Metadades per a la pel·lícula amb ID 34388 (Recomanació 6):
+# Títol: Funeral in Berlin
+# ID: 34388
+# Gèneres: [{'id': 53, 'name': 'Thriller'}]
+
+# Metadades per a la pel·lícula amb ID 31586 (Recomanació 7):
+# Títol: North
+# ID: 31586
+# Gèneres: [{'id': 35, 'name': 'Comedy'}, {'id': 18, 'name': 'Drama'}, {'id': 10751, 'name': 'Family'}, {'id': 14, 'name': 'Fantasy'}, {'id': 878, 'name': 'Science Fiction'}]
+
+# Metadades per a la pel·lícula amb ID 81367 (Recomanació 8):
+# Títol: Slappy and the Stinkers
+# ID: 81367
+# Gèneres: [{'id': 12, 'name': 'Adventure'}, {'id': 10751, 'name': 'Family'}]
+
+# Metadades per a la pel·lícula amb ID 29968 (Recomanació 9):
+# Títol: Nothing in Common
+# ID: 29968
+# Gèneres: [{'id': 18, 'name': 'Drama'}, {'id': 35, 'name': 'Comedy'}, {'id': 10749, 'name': 'Romance'}]
+
+# Metadades per a la pel·lícula amb ID 57240 (Recomanació 10):
+# Títol: Big Shots
+# ID: 57240
+# Gèneres: [{'id': 28, 'name': 'Action'}, {'id': 12, 'name': 'Adventure'}, {'id': 35, 'name': 'Comedy'}]
+
+# Manualment podem comprobar que les recomanacions són correctes
