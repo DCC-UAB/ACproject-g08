@@ -1,9 +1,9 @@
 import pandas as pd 
 import numpy as np
 
-def recommend_movies(active_user, user_movie_matrix, user_similarity_df, n_recommendations=5):
+def recommend_movies(active_user, user_movie_matrix, user_similarity_df, n_recommendations=5, n_similar_users=100):
     # Usuaris similars
-    similar_users = user_similarity_df[active_user].sort_values(ascending=False).index[1:]
+    similar_users = user_similarity_df[active_user].sort_values(ascending=False).index[1:n_similar_users+1]
 
     # Predicció de puntuacions
     recommendations = predict_ratings(active_user, user_movie_matrix, user_similarity_df, similar_users)
@@ -82,14 +82,24 @@ def predict_ratings(active_user, user_movie_matrix, user_similarity_df, similar_
     # Convertir a DataFrame
     predicted_ratings_df = pd.Series(predicted_ratings)
 
+    # Normalitzar les dades
+    min_rating = predicted_ratings_df.min()
+    max_rating = predicted_ratings_df.max()
+    predicted_ratings_df = 1 + 4 * (predicted_ratings_df - min_rating) / (max_rating - min_rating)
+
     return predicted_ratings_df.sort_values(ascending=False)
 
 def print_recommendations(recommendations, userId):
     print(f"Recomanacions de pel·lícules per l'usuari amb ID: {userId}:\n")
-    
-    for i, title in enumerate(recommendations.keys()):
-        print(f"{i+1}. {title}")
+    for i, (title, score) in enumerate(recommendations.items()):
+        print(f"{i+1}. {title} (Puntuació predita: {score:.2f})")
     print()
+
+def save_similarity_matrix_to_csv(similarity_matrix, file_path):
+    similarity_matrix.to_csv(file_path)
+
+def load_similarity_matrix_from_csv(file_path):
+    return pd.read_csv(file_path, index_col=0)
 
 if __name__ == "__main__":
     # Inicialització dataframes
@@ -112,9 +122,19 @@ if __name__ == "__main__":
         values='rating'
     )
     user_movie_matrix_filled = user_movie_matrix.fillna(0)
+    similarity_matrix_path = './Data/user_similarity_matrix.csv'
 
-    user_similarity_matrix = calculate_user_similarity_matrix(user_movie_matrix_filled)
-    user_similarity_df = pd.DataFrame(user_similarity_matrix, index=user_movie_matrix_filled.index, columns=user_movie_matrix_filled.index)
+    try:
+        # Intentar carregar la matriu de similitud des de l'arxiu
+        user_similarity_df = load_similarity_matrix_from_csv(similarity_matrix_path)
+        user_similarity_df.index = user_similarity_df.index.astype(int)
+        user_similarity_df.columns = user_similarity_df.columns.astype(int)
+
+    except FileNotFoundError:
+        # Si no existeix l'arxiu, calcular la matriu de similitud i guardar-la
+        user_similarity_matrix = calculate_user_similarity_matrix(user_movie_matrix_filled)
+        user_similarity_df = pd.DataFrame(user_similarity_matrix, index=user_movie_matrix_filled.index, columns=user_movie_matrix_filled.index)
+        save_similarity_matrix_to_csv(user_similarity_df, similarity_matrix_path)
 
     active_user = 2 # Cambiar per l'usuari desitjat
 
