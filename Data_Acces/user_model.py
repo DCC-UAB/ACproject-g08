@@ -101,11 +101,11 @@ if __name__ == "__main__":
     user_similarity_matrix.columns = user_similarity_matrix.columns.astype(int)
     variance_weights = compute_variance_weights(user_movie_matrix)
 
-    # evaluate_model(user_movie_matrix, user_similarity_matrix, variance_weights)
+    evaluate_model(user_movie_matrix, user_similarity_matrix, variance_weights)
 
-    user = 268
+    user = 547
 
     # Get recommendations for a user
-    recommendations = recommend_movies(user, user_movie_matrix, user_similarity_matrix, variance_weights, 100)
+    recommendations = recommend_movies(user, user_movie_matrix, user_similarity_matrix, variance_weights, 50)
     print(f"Recommendations for {user}:")
     print(recommendations)
