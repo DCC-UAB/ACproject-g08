@@ -60,6 +60,8 @@ if __name__ == "__main__":
     df1 = pd.read_csv('./Data/movies_metadata.csv')
     df2 = pd.read_csv('./Data/ratings.csv')
 
+    metadata_extractor([111,150,593,608,924,1089,1125,1552,1580,1610], df1, 10)
+
     # start = time.time()
 
     # cuenta = organizers.ratings_organizer(organizers.rating_counter(df2))
