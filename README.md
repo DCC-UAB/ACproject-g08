@@ -22,3 +22,9 @@ Aquest sistema recomanador està dissenyat per explorar i avaluar diferents enfo
 - Implementar SVD
 - Comprovar que els models funcionan correctament
 - Graficar les dades
+
+## Preguntes Finals
+#### Amb el projecte finalitzat, encara hi han més preguntes a respondre:
+- Es pot millorar l'accuracy dels recomanadors?
+- Existeixen realment clusters diferenciats pels que separar la BD?
+- Una implemnetació creuada entre models podria millorar les recomanacions o provoca overfitting?
