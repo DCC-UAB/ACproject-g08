@@ -1,6 +1,6 @@
 import pandas as pd
 import time
-from extreure_metadata import *
+from Recomanadors.extreure_metadata import *
 
 # def ratings_per_pelicula(dataset):
 #     #Dataset -> Direcció del dataset

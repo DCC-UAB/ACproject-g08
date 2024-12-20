@@ -4,8 +4,8 @@ from sklearn.model_selection import train_test_split
 from scipy.sparse.linalg import svds
 from sklearn.metrics import mean_squared_error
 
-from extreure_metadata import movie_finder, metadata_extractor
-from user_to_user import print_recommendations
+from Recomanadors.extreure_metadata import movie_finder, metadata_extractor
+from Recomanadors.user_to_user_experiments import print_recommendations
 
 # Funció per recomanar pel·lícules
 def recommend_movies(user_id, predicted_ratings_df, original_ratings):

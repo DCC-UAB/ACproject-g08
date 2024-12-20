@@ -15,11 +15,14 @@ def compute_variance_weights(user_movie_matrix):
     return user_movie_matrix.var(axis=0).apply(np.log1p)
 
 # Predict single movie rating
-def predict_single_movie(user_id, movie_id, user_movie_matrix, user_similarity_matrix, variance_weights, regularization=1e-3):
+def predict_single_movie(user_id, movie_id, user_movie_matrix, user_similarity_matrix, variance_weights, regularization=1e-3, similarity_threshold=0.75):
     user_ratings = user_movie_matrix.loc[user_id]
     valid_users = user_movie_matrix.index[user_movie_matrix[movie_id].notna() & (user_movie_matrix.index != user_id)]
 
-    # Validate indices
+    # Filter users by similarity threshold
+    similarities = user_similarity_matrix.loc[user_id, valid_users]
+    valid_users = valid_users[similarities >= similarity_threshold]
+
     if len(valid_users) == 0:
         return np.nan  # No valid users for prediction
 
@@ -103,7 +106,7 @@ if __name__ == "__main__":
 
     evaluate_model(user_movie_matrix, user_similarity_matrix, variance_weights)
 
-    user = 547
+    user = 53
 
     # Get recommendations for a user
     recommendations = recommend_movies(user, user_movie_matrix, user_similarity_matrix, variance_weights, 50)
