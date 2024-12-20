@@ -36,7 +36,7 @@ def custom_round(x):
 
 def calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings):
     rmse_values = []
-    k_values = [175]
+    k_values = [200]
 
     for k in k_values:
         # Descomposició SVD
@@ -99,7 +99,7 @@ def main():
     metadata_extractor(ids, movies)
 
     # Cas 2: Excloure una pel·lícula i predir el seu valor
-    movie_id_predict = 141
+    movie_id_predict = 390
     print(f"Cas 2: Predir la valoració de la pel·lícula amb ID {movie_id_predict}")
     print()
     original_rating = user_movie_matrix.loc[user_id, movie_id_predict]
