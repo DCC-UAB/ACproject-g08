@@ -159,6 +159,7 @@ def print_recommendations(recommendations, userId):
     print(f"\nRecomanacions de pel·lícules per l'usuari amb ID: {userId}:\n")
     for i, (title, score) in enumerate(recommendations.items()):
         print(f"{i+1}. {title} (Puntuació predita: {score:.2f})")
+    print()
 
 def save_similarity_matrix_to_csv(similarity_matrix, file_path):
     similarity_matrix.to_csv(file_path)
@@ -201,7 +202,7 @@ if __name__ == "__main__":
         user_similarity_df = pd.DataFrame(user_similarity_matrix, index=user_movie_matrix_filled.index, columns=user_movie_matrix_filled.index)
         save_similarity_matrix_to_csv(user_similarity_df, similarity_matrix_path)
 
-    active_user = 53
+    active_user = 547
 
     # Una vegada passem les dades a la matriu de puntuacions User-Item i seleccionem l'usuari, podem aplicar el model
     recommendations = recommend_movies(active_user, user_movie_matrix_filled, user_similarity_df)
@@ -215,7 +216,7 @@ if __name__ == "__main__":
     metadata_extractor(ids, movies_long)
 
     # Predir una pel·lícula específica
-    movie_to_predict = 238
+    movie_to_predict = 141
     print(f"\nAlgorisme de predicció de puntuació de l'usuari {active_user} a la pel·lícula {movie_to_predict}:")
     id_predict = movie_finder([movie_to_predict], movies_long, 5)
     metadata_extractor(id_predict, movies_long)

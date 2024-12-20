@@ -9,7 +9,7 @@
 
 ### També volem ser capaços de respondre a les següents preguntes:
 - Surt a compte netejar la base de dades? Millora el rendiment dels recomanadors?
-    -Efectivament, la netja de la base de dades, tot i que encara simple, pot reduïr en gran quantitat el temps d'execució dels models
+    - Efectivament, la netja de la base de dades, tot i que encara simple, pot reduïr en gran quantitat el temps d'execució dels models
 - Quin model de recomendació és millor pels usuaris que han puntuat més pel·lícules? I pels que han puntuat menys?
 - Algún model afavoreix a que s'escolleixin pel·lícules amb més puntuacions? I amb menys?
 
