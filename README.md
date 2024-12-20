@@ -6,8 +6,20 @@
 Aquest sistema recomanador està dissenyat per explorar i avaluar diferents enfocaments per recomanar pel·lícules als usuaris en funció de les seves interaccions prèvies i les característiques de les pel·lícules. Les dades provenen d'un conjunt reduït de qualificacions (ratings_small.csv) i metadades de pel·lícules (movies_metadata.csv)
 
 ## Instruccions d'execució
-
+#### Descarrega de la BD i inicialització de les dades
+1. Descarregar el la BD del següent link: https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset?select=movies_metadata.csv
+2. Executar l'arxiu cleaner.py de la carpeta Data_Acces 
+#### Executar Recomanadors
+- Dins de la carpeta recomanadors està l'arxiu funcio_principal.py des d'on es poden executar tots els recomanadors
+- Si ja has inicialitzat les dades, pots entrar a cada recomanador de manera separada, cadascún té un __main__ per fer recomanacions y probes amb el propi recomanador
+- Tots els arxius tenen una funció per printejar les dades de manera clara, a part del id de la DB
 ## Seguiment
+### Setmana 1
+#### Objectius primera setmana:
+- Leer base de datos
+- Poner base de datos en formato database (pandas)
+- Visualizar datos (peliculas mas votadas, con rating global más alto, etc...)
+- Limpiar database <- No prioritario
 ### Setmana 2
 #### Per a la següent sessió de seguiment, volem complir els següents objectius:
 - Implementació del models col·laboratius item-item i user-based

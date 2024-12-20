@@ -1,4 +1,0 @@
-- Leer base de datos
-- Poner base de datos en formato database (pandas)
-- Visualizar datos (peliculas mas votadas, con rating global más alto, etc...)
-- Limpiar database <- No prioritario

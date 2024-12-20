@@ -8,7 +8,7 @@ import sys
 
 def extreure_users():
     # Lee el CSV en un DataFrame
-    df = pd.read_csv('./Data/ratings.csv')
+    df = pd.read_csv('./Data/ratings_small.csv')
 
     # Crea una nueva columna 'ratings'
     df['ratings'] = df.apply(lambda row: {'movieId': row['movieId'].astype(int), 'rating': row['rating']}, axis=1)
@@ -17,7 +17,7 @@ def extreure_users():
     df_final = df.groupby('userId')['ratings'].apply(list).reset_index(name='ratings')
 
     # Guarda el DataFrame en un CSV
-    df_final.to_csv('./Data/users.csv', index=False)
+    df_final.to_csv('./Data/users_small.csv', index=False)
 
 def extreure_movies():
     # Lee el CSV en un DataFrame
@@ -35,7 +35,7 @@ def extreure_movies():
 def conexions_usuaris():
     movies = pd.read_csv('./Data/movies_small.csv')
 
-    with open('./Data/users.csv', 'r', encoding='utf-8') as infile, open('./Data/connections.csv', 'w', encoding='utf-8', newline='') as outfile:
+    with open('./Data/users_small.csv', 'r', encoding='utf-8') as infile, open('./Data/connections_small.csv', 'w', encoding='utf-8', newline='') as outfile:
         lector = csv.reader(infile)
         escritor = csv.writer(outfile)
         next(lector)
@@ -92,7 +92,7 @@ def construir_grafo(usuarios):
     return G
 
 def main():
-    pickle_file = './Data/grafo.pickle'
+    pickle_file = './Data/grafo_small.pickle'
     
     if os.path.exists(pickle_file):
         print("Cargando grafo desde archivo guardado...")
@@ -109,11 +109,12 @@ def main():
         with open(pickle_file, 'wb') as f:
             pickle.dump(grafo, f)
         
-        nx.write_graphml(grafo, 'grafo.graphml')
-        print("Grafo exportado a 'grafo.graphml'.")
+        nx.write_graphml(grafo, 'grafo_small.graphml')
+        print("Grafo exportado a 'grafo_small.graphml'.")
 
     print("Grafo cargado o construido:")
     print(f"Número de nodos: {grafo.number_of_nodes()}")
     print(f"Número de aristas: {grafo.number_of_edges()}")
 
-extreure_movies()
+if __name__ == '__main__':
+    extreure_movies()
