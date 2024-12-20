@@ -21,7 +21,7 @@ def extreure_users():
 
 def extreure_movies():
     # Lee el CSV en un DataFrame
-    df = pd.read_csv('./Data/ratings.csv')
+    df = pd.read_csv('./Data/ratings_small.csv')
 
     # Crea una nueva columna 'ratings'
     df['users'] = df.apply(lambda row: {'userId': row['userId'].astype(int), 'rating': row['rating']}, axis=1)
@@ -30,10 +30,10 @@ def extreure_movies():
     df_final = df.groupby('movieId')['users'].apply(list).reset_index(name='ratings')
 
     # Guarda el DataFrame en un CSV
-    df_final.to_csv('./Data/movies.csv', index=False)
+    df_final.to_csv('./Data/movies_small.csv', index=False)
 
 def conexions_usuaris():
-    movies = pd.read_csv('./Data/movies.csv')
+    movies = pd.read_csv('./Data/movies_small.csv')
 
     with open('./Data/users.csv', 'r', encoding='utf-8') as infile, open('./Data/connections.csv', 'w', encoding='utf-8', newline='') as outfile:
         lector = csv.reader(infile)
@@ -116,4 +116,4 @@ def main():
     print(f"Número de nodos: {grafo.number_of_nodes()}")
     print(f"Número de aristas: {grafo.number_of_edges()}")
 
-main()
+extreure_movies()
