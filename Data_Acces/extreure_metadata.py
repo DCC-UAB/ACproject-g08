@@ -12,7 +12,7 @@ def metadata_extractor(movieIds: list, movies_metadata: pd.DataFrame):
     n -- Nombre màxim de pel·lícules per a les quals volem extreure metadades
     """
     counter = 1
-    for i,movieId in enumerate(movieIds):
+    for movieId in movieIds:
         try:
             # Filtrar les metadades per la ID de la pel·lícula
             metadata = movies_metadata[movies_metadata['id'] == str(movieId)]
@@ -25,7 +25,7 @@ def metadata_extractor(movieIds: list, movies_metadata: pd.DataFrame):
             col_order = ['title', 'id', 'genres', 'popularity', 'release_date', 'vote_average', 'vote_count']
             col_names = ['Títol', 'ID', 'Gèneres', 'Popularitat', 'Data de llançament', 'Mitjana de vots', 'Número de vots']
 
-            print(f"\nMetadades per a la pel·lícula amb ID {movieId} (Recomanació {counter}) ({i+1}):")
+            print(f"\nMetadades per a la pel·lícula amb ID {movieId} (Recomanació {counter}):")
             for col, nom in zip(col_order, col_names):
                 val = metadata.iloc[0][col]
                 print(f"{nom}: {val}")
@@ -38,7 +38,7 @@ def metadata_extractor(movieIds: list, movies_metadata: pd.DataFrame):
 def movie_finder(movieIds: list, movies_metadata: pd.DataFrame, n: int):
     ids = []
     counter = 0
-    for movieId in movieIds:
+    for i,movieId in enumerate(movieIds):
         if counter >= n:
             break  # Hem arribat al límit de pel·lícules desitjades
 
@@ -50,6 +50,7 @@ def movie_finder(movieIds: list, movies_metadata: pd.DataFrame, n: int):
                 continue
 
             ids.append(movieId) 
+            print(f"\nPel·lícula amb ID {movieId} afegida (opció de recomanació número {i+1})")
             counter += 1
 
         except Exception as e:
