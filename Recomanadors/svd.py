@@ -4,8 +4,8 @@ from sklearn.model_selection import train_test_split
 from scipy.sparse.linalg import svds
 from sklearn.metrics import mean_squared_error
 
-from Recomanadors.extreure_metadata import movie_finder, metadata_extractor
-from Recomanadors.user_to_user_experiments import print_recommendations
+from extreure_metadata import movie_finder, metadata_extractor
+from user_to_user_experiments import print_recommendations
 
 # Funció per recomanar pel·lícules
 def recommend_movies(user_id, predicted_ratings_df, original_ratings):
@@ -73,7 +73,9 @@ def calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings):
 
     return predicted_ratings_df
 
-def main():
+def main_svd():
+    user_id = int(input("Introdueix ID d'usuari al que recomanar-li pel·lícules: "))
+    movie_id_predict = int(input("Introdueix ID de pel·lícula a comprovar: "))
     # Carregar les dades
     ratings = pd.read_csv('./Data/ratings_small.csv')
     movies = pd.read_csv('./Data/movies_metadata.csv')
@@ -87,7 +89,7 @@ def main():
     # Omplir valors NaN amb la mitjana per usuari
     user_movie_matrix_filled = user_movie_matrix.apply(lambda row: row.fillna(row.mean()), axis=1).to_numpy()
 
-    user_id = 547
+    # user_id = 547
     # Cas 1: Recomanar 5 pel·lícules a l'usuari 665
     print(f"Cas 1: Recomanacions per a l'usuari {user_id}")
     print()
@@ -99,7 +101,7 @@ def main():
     metadata_extractor(ids, movies)
 
     # Cas 2: Excloure una pel·lícula i predir el seu valor
-    movie_id_predict = 390
+    # movie_id_predict = 390
     print(f"Cas 2: Predir la valoració de la pel·lícula amb ID {movie_id_predict}")
     print()
     original_rating = user_movie_matrix.loc[user_id, movie_id_predict]
@@ -122,4 +124,4 @@ def main():
     metadata_extractor([movie_id_predict], movies)
 
 if __name__ == "__main__":
-    main()
+    main_svd()

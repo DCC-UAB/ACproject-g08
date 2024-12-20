@@ -1,5 +1,4 @@
 import pandas as pd 
-import organizers
 import time
 
 def metadata_extractor(movieIds: list, movies_metadata: pd.DataFrame):

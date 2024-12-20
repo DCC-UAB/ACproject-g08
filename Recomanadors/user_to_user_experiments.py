@@ -1,6 +1,6 @@
 import pandas as pd 
 import numpy as np
-from Recomanadors.extreure_metadata import metadata_extractor, movie_finder
+from extreure_metadata import metadata_extractor, movie_finder
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 import matplotlib.pyplot as plt

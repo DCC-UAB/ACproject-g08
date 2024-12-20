@@ -236,28 +236,45 @@ def content_recommend_genres_basic(ratings, keywords, user, num):
 
     return final[:num]
 
-if __name__ == "__main__":
-    u = 0
-    n = 10
+def main_content():
+    # u = 0
+    # n = 10
+    u = int(input("Introdueix ID d'usuari per recomanar-li pel·lícules: "))
+    n = int(input("Introdueix el número de pel·lícules a recomanar: "))
+
+    print("1. Recomanador sense ratings ni gèneres")
+    print("2. Recomanador amb ratings però sense gèneres")
+    print("3. Recomanador sense ratings però amb gèneres")
+    print("4. Recomanador amb ratings i gèneres")
+    print()
+    
+    opcio = int(input("Escolleix el tipus de recomanador: "))
+
     df1 = pd.read_csv('./Data/content_ratings.csv')
     df2 = pd.read_csv('./Data/content_keywords.csv')
-    final = content_recommend(df1, df2, u, n)
-    print(final)
+    if opcio == 1:
+        final = content_recommend(df1, df2, u, n)
+        print(final)
     # user 1 -> [44284, 52856, 11017, 218473, 23637]
     # user 2 -> [604, 52587, 24100, 251797, 433878]
-    final = content_recommend_basic(df1, df2, u, n)
-    print(final)
+    elif opcio == 2:
+        final = content_recommend_basic(df1, df2, u, n)
+        print(final)
     # user 1 -> [44284, 52856, 11017, 218473, 23637]
     # user 2 -> [604, 251797, 433878, 52587, 31586]
-    final = content_recommend_genres(df1, df2, u, n)
-    print(final)
+    elif opcio == 3:
+        final = content_recommend_genres(df1, df2, u, n)
+        print(final)
     # user 1 -> [44284, 213917, 124676, 41240, 124843]
     # user 2 -> [604, 14886, 9684, 31208, 308084]
-    final = content_recommend_genres_basic(df1, df2, u, n)
+    elif opcio == 4:
+        final = content_recommend_genres_basic(df1, df2, u, n)
     # user 1 -> [44284, 213917, 124676, 41240, 124843]
     # user 2 -> [604, 285, 22, 17745, 1865]
     print(final)
 
+if __name__ == "__main__":
+    main_content()
     # Experiment usuari 0 -> Igual que l'usuari 2 però no té la 605 i 628
     # [251797, 433878, 10131, 10072, 33494]
     # [251797, 433878, 31586, 81367, 29968]

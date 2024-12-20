@@ -85,10 +85,10 @@ def recommend_movies(user_id, user_movie_matrix, user_similarity_matrix, varianc
     recommended_movies = pd.Series(predictions).sort_values(ascending=False).head(n_recommendations)
     return recommended_movies
 
-# Example usage
-if __name__ == "__main__":
+def main_user():
     # Example dataset (replace with actual data for larger cases)
     # Inicialització dataframes
+    user = int(input("Introdueix ID d'usuari per recomanar-li pel·lícules: "))
     ratings = pd.read_csv('./Data/ratings_small.csv') # movieid = int64
 
     user_movie_matrix = ratings.pivot_table(
@@ -106,9 +106,13 @@ if __name__ == "__main__":
 
     evaluate_model(user_movie_matrix, user_similarity_matrix, variance_weights)
 
-    user = 53
+    # user = 53
 
     # Get recommendations for a user
     recommendations = recommend_movies(user, user_movie_matrix, user_similarity_matrix, variance_weights, 50)
     print(f"Recommendations for {user}:")
     print(recommendations)
+
+# Example usage
+if __name__ == "__main__":
+    main_user()
