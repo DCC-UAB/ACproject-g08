@@ -2,14 +2,14 @@ import pandas as pd
 import numpy as np
 from extreure_metadata import metadata_extractor, movie_finder
 
-def recommend_movies(active_user, user_movie_matrix, user_similarity_df, n_recommendations=5, n_similar_users=100):
+def recommend_movies(active_user, user_movie_matrix, user_similarity_df, n_recommendations=5, n_similar_users=20):
     # Usuaris similars
     similar_users = user_similarity_df[active_user].sort_values(ascending=False).index[1:n_similar_users+1]
 
     # Predicció de puntuacions
     recommendations = predict_ratings(active_user, user_movie_matrix, user_similarity_df, similar_users)
     
-    return recommendations.head(n_recommendations)
+    return recommendations
 
 def calculate_user_similarity_matrix(user_movie_matrix):
     """
@@ -135,7 +135,7 @@ def predict_single_movie(active_user, movie_id, user_movie_matrix, user_similari
     update_user_similarity(active_user, modified_matrix, local_similarity_df)
 
     # Usuaris similars
-    similar_users = local_similarity_df[active_user].sort_values(ascending=False).index[1:50]
+    similar_users = local_similarity_df[active_user].sort_values(ascending=False).index[1:21]
 
     # Predicció per a la pel·lícula específica
     user_mean_rating = user_movie_matrix.loc[active_user].mean()
@@ -206,16 +206,20 @@ if __name__ == "__main__":
     # Una vegada passem les dades a la matriu de puntuacions User-Item i seleccionem l'usuari, podem aplicar el model
     recommendations = recommend_movies(active_user, user_movie_matrix_filled, user_similarity_df)
 
+    print(list(recommendations.keys()))
     # Comprovar que les recomanacions es troben a la database de metadata, i després imprimir-les
     ids = movie_finder(list(recommendations.keys()), movies_long, 5)
-    print_recommendations(recommendations, active_user)
-    metadata_extractor(ids, movies_long, 5)
+    
+    recommendations_print = {id: recommendations[id] for id in ids}
+    print_recommendations(recommendations_print, active_user)
+    
+    metadata_extractor(ids, movies_long)
 
     # Predir una pel·lícula específica
     movie_to_predict = 238
     id_predict = movie_finder([movie_to_predict], movies_long, 5)
     print(f"\nPredicció de puntuació de l'usuari {active_user} a la pel·lícula {movie_to_predict}:")
-    metadata_extractor(id_predict, movies_long, 5)
+    metadata_extractor(id_predict, movies_long)
     
     predicted_score = predict_single_movie(active_user, movie_to_predict, user_movie_matrix_filled, user_similarity_df)
     if predicted_score:

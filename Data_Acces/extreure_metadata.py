@@ -2,7 +2,7 @@ import pandas as pd
 import organizers
 import time
 
-def metadata_extractor(movieIds: list, movies_metadata: pd.DataFrame, n: int):
+def metadata_extractor(movieIds: list, movies_metadata: pd.DataFrame):
     """
     Retorna les metadades de les pel·lícules segons les seves IDs.
 
@@ -12,10 +12,7 @@ def metadata_extractor(movieIds: list, movies_metadata: pd.DataFrame, n: int):
     n -- Nombre màxim de pel·lícules per a les quals volem extreure metadades
     """
     counter = 1
-    for movieId in movieIds:
-        if counter >= n+1:
-            break  # Hem arribat al límit de pel·lícules desitjades
-
+    for i,movieId in enumerate(movieIds):
         try:
             # Filtrar les metadades per la ID de la pel·lícula
             metadata = movies_metadata[movies_metadata['id'] == str(movieId)]
@@ -28,7 +25,7 @@ def metadata_extractor(movieIds: list, movies_metadata: pd.DataFrame, n: int):
             col_order = ['title', 'id', 'genres', 'popularity', 'release_date', 'vote_average', 'vote_count']
             col_names = ['Títol', 'ID', 'Gèneres', 'Popularitat', 'Data de llançament', 'Mitjana de vots', 'Número de vots']
 
-            print(f"\nMetadades per a la pel·lícula amb ID {movieId} (Recomanació {counter}):")
+            print(f"\nMetadades per a la pel·lícula amb ID {movieId} (Recomanació {counter}) ({i+1}):")
             for col, nom in zip(col_order, col_names):
                 val = metadata.iloc[0][col]
                 print(f"{nom}: {val}")
