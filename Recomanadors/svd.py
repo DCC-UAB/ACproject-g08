@@ -90,7 +90,7 @@ def main_svd():
     user_movie_matrix_filled = user_movie_matrix.apply(lambda row: row.fillna(row.mean()), axis=1).to_numpy()
 
     # user_id = 547
-    # Cas 1: Recomanar 5 pel·lícules a l'usuari 665
+    # Cas 1: Recomanar pel·lícules a l'usuari
     print(f"Cas 1: Recomanacions per a l'usuari {user_id}")
     print()
     predicted_ratings_df = calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings)
