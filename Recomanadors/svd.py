@@ -36,7 +36,7 @@ def custom_round(x):
 
 def calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings):
     rmse_values = []
-    k_values = [200]
+    k_values = [670]
 
     for k in k_values:
         # Descomposició SVD
