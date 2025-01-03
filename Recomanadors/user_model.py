@@ -31,7 +31,7 @@ def predict_single_movie(user_id, movie_id, user_movie_matrix, user_similarity_m
     if len(valid_users) == 0:
         return np.nan  # No valid users for prediction
 
-    similarities = user_similarity_matrix.loc[user_id, valid_users]
+    # similarities = user_similarity_matrix.loc[user_id, valid_users]
     # jaccard = jaccard_similarity_matrix.loc[user_id, valid_users]
     # combined = 0.5 * similarities + 0.5 * jaccard
     weights = (similarities * variance_weights[movie_id]) / (regularization + np.abs(similarities))  # Regularization
@@ -65,7 +65,7 @@ def evaluate_model(user_movie_matrix, user_similarity_matrix, jaccard_similarity
     predicted_ratings = np.array(predicted_ratings)
     min_rating = predicted_ratings.min()
     max_rating = predicted_ratings.max()
-    predicted_ratings = 1 + 4 * (predicted_ratings - min_rating) / (max_rating - min_rating)
+    predicted_ratings = 0 + 5 * (predicted_ratings - min_rating) / (max_rating - min_rating)
     predicted_ratings = [arrodonir(valor) for valor in predicted_ratings] 
 
     # Calculate evaluation metrics
@@ -99,10 +99,12 @@ def recommend_movies(user_id, user_movie_matrix, user_similarity_matrix, jaccard
     min_rating = min(ratings)
     max_rating = max(ratings)
     for movie in predictions:
-        predictions[movie] = 1 + 4 * (predictions[movie] - min_rating) / (max_rating - min_rating)
+        predictions[movie] = 0 + 5 * (predictions[movie] - min_rating) / (max_rating - min_rating)
 
     # Sort movies by predicted ratings
     recommended_movies = pd.Series(predictions).sort_values(ascending=False)
+    tmp = sorted(list(predictions.items()), key= lambda x: x[1], reverse=True)
+    recommended_movies = [tupla[0] for tupla in tmp]
     return recommended_movies
 
 def main_user():
