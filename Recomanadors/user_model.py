@@ -31,11 +31,9 @@ def predict_single_movie(user_id, movie_id, user_movie_matrix, user_similarity_m
         return np.nan  # No valid users for prediction
 
     similarities = user_similarity_matrix.loc[user_id, valid_users]
-    jaccard = jaccard_similarity_matrix.loc[user_id, valid_users]
-    combined = 0.5 * similarities + 0.5 * jaccard
-    print(similarities)
-    print(combined)
-    weights = (combined * variance_weights[movie_id]) / (regularization + np.abs(combined))  # Regularization
+    # jaccard = jaccard_similarity_matrix.loc[user_id, valid_users]
+    # combined = 0.5 * similarities + 0.5 * jaccard
+    weights = (similarities * variance_weights[movie_id]) / (regularization + np.abs(similarities))  # Regularization
 
     ratings = user_movie_matrix.loc[valid_users, movie_id]
     weighted_sum = (weights * ratings).sum()
@@ -104,16 +102,17 @@ def main_user():
         columns='movieId',
         values='rating'
     )
-    user_movie_matrix_filled = user_movie_matrix.fillna(0)
+
     similarity_matrix_path = './Data/user_similarity_matrix.csv'
     jaccard_matrix_path = './Data/jaccard_similarity_matrix.csv'
 
     user_similarity_matrix = pd.read_csv(similarity_matrix_path, index_col=0)
     user_similarity_matrix.index = user_similarity_matrix.index.astype(float)
     user_similarity_matrix.columns = user_similarity_matrix.columns.astype(float)
-    jaccard_similarity_matrix = pd.read_csv(jaccard_matrix_path, index_col=0)
-    jaccard_similarity_matrix.index = jaccard_similarity_matrix.index.astype(float)
-    jaccard_similarity_matrix.columns = jaccard_similarity_matrix.columns.astype(float)
+    jaccard_similarity_matrix = pd.DataFrame()
+    # jaccard_similarity_matrix = pd.read_csv(jaccard_matrix_path, index_col=0)
+    # jaccard_similarity_matrix.index = jaccard_similarity_matrix.index.astype(float)
+    # jaccard_similarity_matrix.columns = jaccard_similarity_matrix.columns.astype(float)
     variance_weights = compute_variance_weights(user_movie_matrix)
 
     evaluate_model(user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix, variance_weights)
