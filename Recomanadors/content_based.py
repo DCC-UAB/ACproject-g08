@@ -56,7 +56,7 @@ def content_recommend(ratings, keywords, user, num):
             keywords_vista = list(x['name'] for x in filtro2)
             # print(keywords)
             d = dice_coefficient(keywords_vista, keywords_no_vista)
-            d = d * ratings_user[vista['id']]**2 #Fem que el rating a la película vista importi pero no tant
+            d = d * ratings_user[vista['id']]**2 #Fem que el rating a la película vista importi
             dists.append(d)
         distancies[no_vista['id']] = max(dists)
 
@@ -158,7 +158,7 @@ def content_recommend_genres(ratings, keywords, user, num):
             # print(keywords)
             dk = dice_coefficient(keywords_vista, keywords_no_vista)
             dg = dice_coefficient(genres_vista, genres_no_vista)
-            d = (dk + (dg * 1.5)) * ratings_user[vista['id']]**2 #Fem que el rating a la película vista importi pero no tant
+            d = (dk + (dg * 1.5)) * ratings_user[vista['id']]**2 #Fem que el rating a la película vista importi
             dists.append(d)
         distancies[no_vista['id']] = max(dists)
 
@@ -212,7 +212,7 @@ def content_recommend_genres_basic(ratings, keywords, user, num):
             # print(keywords)
             dk = dice_coefficient(keywords_vista, keywords_no_vista)
             dg = dice_coefficient(genres_vista, genres_no_vista)
-            d = (dk + (dg * 1.5)) #Fem que el rating a la película vista importi pero no tant
+            d = (dk + (dg * 1.5))
             dists.append(d)
         distancies[no_vista['id']] = max(dists)
 
