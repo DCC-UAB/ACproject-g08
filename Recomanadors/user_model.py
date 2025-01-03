@@ -44,7 +44,7 @@ def predict_single_movie(user_id, movie_id, user_movie_matrix, user_similarity_m
     predicted_rating = weighted_sum / normalization_factor
 
     # Normalize predictions to range [0, 5]
-    return min(max(predicted_rating, 0), 5)
+    return predicted_rating
 
 # Evaluate model
 def evaluate_model(user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix,variance_weights):
@@ -61,6 +61,11 @@ def evaluate_model(user_movie_matrix, user_similarity_matrix, jaccard_similarity
                 if not np.isnan(predicted_rating):
                     actual_ratings.append(actual_rating)
                     predicted_ratings.append(predicted_rating)
+
+    # Normalitzar les dades
+    min_rating = predictions.min()
+    max_rating = predictions.max()
+    predictions = 1 + 4 * (predictions - min_rating) / (max_rating - min_rating)
 
     # Calculate evaluation metrics
     mae = mean_absolute_error(actual_ratings, predicted_ratings)
@@ -88,6 +93,11 @@ def recommend_movies(user_id, user_movie_matrix, user_similarity_matrix, jaccard
         predictions[movie_id] = predict_single_movie(
             user_id, movie_id, user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix, variance_weights
         )
+
+    # Normalitzar les dades
+    min_rating = predictions.min()
+    max_rating = predictions.max()
+    predictions = 1 + 4 * (predictions - min_rating) / (max_rating - min_rating)
 
     # Sort movies by predicted ratings
     recommended_movies = pd.Series(predictions).sort_values(ascending=False).head(n_recommendations)
