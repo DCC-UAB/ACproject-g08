@@ -95,9 +95,11 @@ def recommend_movies(user_id, user_movie_matrix, user_similarity_matrix, jaccard
         )
 
     # Normalitzar les dades
-    min_rating = predictions.min()
-    max_rating = predictions.max()
-    predictions = 1 + 4 * (predictions - min_rating) / (max_rating - min_rating)
+    ratings = list(predictions.values())
+    min_rating = min(ratings)
+    max_rating = max(ratings)
+    for movie in predictions:
+        predictions[movie] = 1 + 4 * (predictions[movie] - min_rating) / (max_rating - min_rating)
 
     # Sort movies by predicted ratings
     recommended_movies = pd.Series(predictions).sort_values(ascending=False).head(n_recommendations)
