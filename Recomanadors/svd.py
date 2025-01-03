@@ -19,7 +19,7 @@ def recommend_movies(user_id, predicted_ratings_df, original_ratings):
     max_rating = predictions.max()
     predictions = 1 + 4 * (predictions - min_rating) / (max_rating - min_rating)
 
-    predictions = predictions = predictions.apply(arrodonir)
+    predictions = predictions.apply(arrodonir)
 
     recommendations = predictions.sort_values(ascending=False)
     return recommendations

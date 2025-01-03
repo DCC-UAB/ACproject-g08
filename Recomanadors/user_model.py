@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+from svd import arrodonir
+from extreure_metadata import movie_finder, metadata_extractor
 
 # Similarity computation
 def compute_user_similarity(user_movie_matrix):
@@ -12,8 +14,7 @@ def compute_user_similarity(user_movie_matrix):
 
 # Variance weights
 def compute_variance_weights(user_movie_matrix):
-    temp_matrix = user_movie_matrix.replace(0, np.nan)
-    return temp_matrix.var(axis=0).apply(np.log1p)
+    return user_movie_matrix.var(axis=0).apply(np.log1p)
 
 # Predict single movie rating
 def predict_single_movie(user_id, movie_id, user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix, variance_weights, regularization=1e-3, similarity_threshold=0.75):
@@ -31,11 +32,9 @@ def predict_single_movie(user_id, movie_id, user_movie_matrix, user_similarity_m
         return np.nan  # No valid users for prediction
 
     similarities = user_similarity_matrix.loc[user_id, valid_users]
-    jaccard = jaccard_similarity_matrix.loc[user_id, valid_users]
-    combined = 0.5 * similarities + 0.5 * jaccard
-    print(similarities)
-    print(combined)
-    weights = (combined * variance_weights[movie_id]) / (regularization + np.abs(combined))  # Regularization
+    # jaccard = jaccard_similarity_matrix.loc[user_id, valid_users]
+    # combined = 0.5 * similarities + 0.5 * jaccard
+    weights = (similarities * variance_weights[movie_id]) / (regularization + np.abs(similarities))  # Regularization
 
     ratings = user_movie_matrix.loc[valid_users, movie_id]
     weighted_sum = (weights * ratings).sum()
@@ -63,9 +62,11 @@ def evaluate_model(user_movie_matrix, user_similarity_matrix, jaccard_similarity
                     predicted_ratings.append(predicted_rating)
 
     # Normalitzar les dades
-    min_rating = predictions.min()
-    max_rating = predictions.max()
-    predictions = 1 + 4 * (predictions - min_rating) / (max_rating - min_rating)
+    predicted_ratings = np.array(predicted_ratings)
+    min_rating = predicted_ratings.min()
+    max_rating = predicted_ratings.max()
+    predicted_ratings = 1 + 4 * (predicted_ratings - min_rating) / (max_rating - min_rating)
+    predicted_ratings = [arrodonir(valor) for valor in predicted_ratings] 
 
     # Calculate evaluation metrics
     mae = mean_absolute_error(actual_ratings, predicted_ratings)
@@ -84,7 +85,7 @@ def evaluate_model(user_movie_matrix, user_similarity_matrix, jaccard_similarity
     plt.show()
 
 # Recommend movies for a user
-def recommend_movies(user_id, user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix,variance_weights, n_recommendations=5):
+def recommend_movies(user_id, user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix,variance_weights):
     user_ratings = user_movie_matrix.loc[user_id]
     unrated_movies = user_ratings[user_ratings.isna()].index
 
@@ -94,7 +95,6 @@ def recommend_movies(user_id, user_movie_matrix, user_similarity_matrix, jaccard
             user_id, movie_id, user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix, variance_weights
         )
 
-    # Normalitzar les dades
     ratings = list(predictions.values())
     min_rating = min(ratings)
     max_rating = max(ratings)
@@ -102,7 +102,7 @@ def recommend_movies(user_id, user_movie_matrix, user_similarity_matrix, jaccard
         predictions[movie] = 1 + 4 * (predictions[movie] - min_rating) / (max_rating - min_rating)
 
     # Sort movies by predicted ratings
-    recommended_movies = pd.Series(predictions).sort_values(ascending=False).head(n_recommendations)
+    recommended_movies = pd.Series(predictions).sort_values(ascending=False)
     return recommended_movies
 
 def main_user():
@@ -110,22 +110,24 @@ def main_user():
     # Inicialització dataframes
     user = int(input("Introdueix ID d'usuari per recomanar-li pel·lícules: "))
     ratings = pd.read_csv('./Data/ratings_small.csv') # movieid = int64
+    movies = pd.read_csv('./Data/movies_metadata.csv', low_memory=False)
 
     user_movie_matrix = ratings.pivot_table(
         index='userId',
         columns='movieId',
         values='rating'
     )
-    user_movie_matrix_filled = user_movie_matrix.fillna(0)
+
     similarity_matrix_path = './Data/user_similarity_matrix.csv'
     jaccard_matrix_path = './Data/jaccard_similarity_matrix.csv'
 
     user_similarity_matrix = pd.read_csv(similarity_matrix_path, index_col=0)
     user_similarity_matrix.index = user_similarity_matrix.index.astype(float)
     user_similarity_matrix.columns = user_similarity_matrix.columns.astype(float)
-    jaccard_similarity_matrix = pd.read_csv(jaccard_matrix_path, index_col=0)
-    jaccard_similarity_matrix.index = jaccard_similarity_matrix.index.astype(float)
-    jaccard_similarity_matrix.columns = jaccard_similarity_matrix.columns.astype(float)
+    jaccard_similarity_matrix = pd.DataFrame()
+    # jaccard_similarity_matrix = pd.read_csv(jaccard_matrix_path, index_col=0)
+    # jaccard_similarity_matrix.index = jaccard_similarity_matrix.index.astype(float)
+    # jaccard_similarity_matrix.columns = jaccard_similarity_matrix.columns.astype(float)
     variance_weights = compute_variance_weights(user_movie_matrix)
 
     evaluate_model(user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix, variance_weights)
@@ -133,7 +135,9 @@ def main_user():
     # user = 53
 
     # Get recommendations for a user
-    # recommendations = recommend_movies(user, user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix, variance_weights, 10)
+    recommendations = recommend_movies(user, user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix, variance_weights)
+    ids = movie_finder(recommendations, movies, 10)
+    metadata_extractor(ids, movies)
     # print(f"Recommendations for {user}:")
     # print(recommendations)
 
