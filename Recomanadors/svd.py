@@ -35,8 +35,8 @@ def arrodonir(x):
 
 def calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings, f_l):
     rmse_values = []
-    k_values = [25, 50, 100, 200, 400, f_l]     # només es retornen les pel·lícules de la k en última posició
-                                                # (es pot fer servir per conéixer el RMSE per valor de k)
+    k_values = [f_l]    # només es retornen les pel·lícules de la k en última posició
+                        # (es pot fer servir per conéixer el RMSE per cada valor de k)
 
     for k in k_values:
         start_time = time.time()
