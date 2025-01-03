@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
+import time
 from scipy.sparse.linalg import svds
 from sklearn.metrics import mean_squared_error
 
@@ -19,26 +19,27 @@ def recommend_movies(user_id, predicted_ratings_df, original_ratings):
     max_rating = predictions.max()
     predictions = 1 + 4 * (predictions - min_rating) / (max_rating - min_rating)
 
-    predictions = predictions = predictions.apply(custom_round)
+    predictions = predictions = predictions.apply(arrodonir)
 
     recommendations = predictions.sort_values(ascending=False)
     return recommendations
 
-def custom_round(x):
-        decimal_part = x - int(x)
-
-        if decimal_part < 0.25:
+def arrodonir(x):
+        part_decimal = x - int(x)
+        if part_decimal < 0.25:
             return int(x) 
-        elif decimal_part < 0.75:
+        elif part_decimal < 0.75:
             return int(x) + 0.5
         else:
             return int(x) + 1
 
-def calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings):
+def calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings, f_l):
     rmse_values = []
-    k_values = [670]
+    k_values = [25, 50, 100, 200, 400, f_l]     # només es retornen les pel·lícules de la k en última posició
+                                                # (es pot fer servir per conéixer el RMSE per valor de k)
 
     for k in k_values:
+        start_time = time.time()
         # Descomposició SVD
         U, sigma, Vt = svds(user_movie_matrix_filled, k=k)
         sigma = np.diag(sigma)
@@ -61,6 +62,8 @@ def calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings):
             predictions.append(pred)
             true_ratings.append(actual)
 
+        end_time = time.time()
+
         # Gestionar valors absents (p. ex., pel·lícules no predites)
         predictions = np.nan_to_num(predictions, nan=np.mean(true_ratings))
 
@@ -68,17 +71,21 @@ def calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings):
         rmse = np.sqrt(mean_squared_error(true_ratings, predictions))
         rmse_values.append((k, rmse))
         print(f"Algorisme SVD:")
-        print(f"k = {k}, RMSE = {rmse:.4f}")
+        print(f"k = {k}, RMSE = {rmse:.4f}, Temps de còmput = {end_time - start_time}")
         print()
 
     return predicted_ratings_df
 
 def main_svd():
-    user_id = int(input("Introdueix ID d'usuari al que recomanar-li pel·lícules: "))
-    movie_id_predict = int(input("Introdueix ID de pel·lícula a comprovar: "))
+    user_id = int(input("Introdueix ID d'usuari al que recomanar-li pel·lícules (cas 1): "))
+    print()
+    n_movies = int(input("Introdueix el número de pel·lícules a recomanar: "))
+    print()
+    movie_id_predict = int(input("Introdueix ID de pel·lícula a comprovar (cas 2): "))
+    print()
     # Carregar les dades
     ratings = pd.read_csv('./Data/ratings_small.csv')
-    movies = pd.read_csv('./Data/movies_metadata.csv')
+    movies = pd.read_csv('./Data/movies_metadata.csv', low_memory=False)
 
     # Crear la matriu usuari-pel·lícula
     user_movie_matrix = ratings.pivot_table(
@@ -86,22 +93,33 @@ def main_svd():
         columns='movieId',
         values='rating')
 
+    print("Finalment, introdueix la k (factors latents) per l'algorisme SVD")
+    factors_latents = int(input(f"Nota: com a màxim, k = {len(user_movie_matrix.index) - 1} (quantitat d'usuaris): "))
+    print()
+
     # Omplir valors NaN amb la mitjana per usuari
     user_movie_matrix_filled = user_movie_matrix.apply(lambda row: row.fillna(row.mean()), axis=1).to_numpy()
 
-    # user_id = 547
+    # user_id = 547 # USUARI    
+
     # Cas 1: Recomanar pel·lícules a l'usuari
     print(f"Cas 1: Recomanacions per a l'usuari {user_id}")
     print()
-    predicted_ratings_df = calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings)
+    predicted_ratings_df = calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings, factors_latents)
     recommendations = recommend_movies(user_id, predicted_ratings_df, ratings)
-    ids = movie_finder(list(recommendations.keys()), movies, 5)
+
+    # Buscar només les millors pel·lícules que estiguin a la database de metadata
+    # (ja que si no es troben allà no podem retornar la seva informació)
+    ids = movie_finder(list(recommendations.keys()), movies, n_movies)
     recommendations_print = {id: recommendations[id] for id in ids}
     print_recommendations(recommendations_print, user_id)
+
+    # I printem per pantalla la informació (títol, ID, Gèneres, Popularitat, etc.)
     metadata_extractor(ids, movies)
 
+    # movie_id_predict = 390 # PEL:LÍCULA
+
     # Cas 2: Excloure una pel·lícula i predir el seu valor
-    # movie_id_predict = 390
     print(f"Cas 2: Predir la valoració de la pel·lícula amb ID {movie_id_predict}")
     print()
     original_rating = user_movie_matrix.loc[user_id, movie_id_predict]
@@ -113,10 +131,10 @@ def main_svd():
 
     # Recalcular la matriu amb el valor eliminat
     user_movie_matrix_filled = user_movie_matrix.apply(lambda row: row.fillna(row.mean()), axis=1).to_numpy()
-    predicted_ratings_df = calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings)
+    predicted_ratings_df = calcular_svd(user_movie_matrix, user_movie_matrix_filled, ratings, factors_latents)
 
-    # Obtenir la nova predicció per a la pel·lícula 32
-    new_prediction = custom_round(predicted_ratings_df.loc[user_id, movie_id_predict])
+    # Obtenir la nova predicció per a la pel·lícula
+    new_prediction = arrodonir(predicted_ratings_df.loc[user_id, movie_id_predict])
     print(f"Valor original: {original_rating}, Predicció: {new_prediction}")
     print()
 
