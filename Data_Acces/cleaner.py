@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import colaborative_cleaner
 import graph
+import time
 
 def calculate_user_similarity_matrix(user_movie_matrix):
     """
@@ -65,12 +66,40 @@ def create_similarity():
     user_similarity_df = pd.DataFrame(user_similarity_matrix, index=user_movie_matrix_filled.index, columns=user_movie_matrix_filled.index)
     user_similarity_df.to_csv(similarity_matrix_path)
 
-content_based_cleaner.afegir_generes()
-content_based_cleaner.clean_empty_keywords()
-content_based_cleaner.clean_ratings()
-create_similarity()
-colaborative_cleaner.user_cleaner()
-colaborative_cleaner.item_cleaner()
-graph.extreure_users()
-graph.extreure_movies()
-graph.main()
+def calculate_jaccard_similarity_matrix(user_movie_matrix):
+    binary_matrix = (user_movie_matrix != 0).astype(int)
+    jaccard_matrix = np.zeros((binary_matrix.shape[0], binary_matrix.shape[0]))
+
+    for i, user_i in enumerate(binary_matrix.index):
+        for j, user_j in enumerate(binary_matrix.index):
+            if i <= j:  # Compute only for upper triangular and diagonal
+                intersection = (binary_matrix.loc[user_i] & binary_matrix.loc[user_j]).sum()
+                union = (binary_matrix.loc[user_i] | binary_matrix.loc[user_j]).sum()
+                jaccard_matrix[i, j] = jaccard_matrix[j, i] = intersection / union if union > 0 else 0
+
+    return pd.DataFrame(jaccard_matrix, index=user_movie_matrix.index, columns=user_movie_matrix.index)
+
+def create_jaccard():
+    ratings = pd.read_csv('./Data/ratings_small.csv') # movieid = int64
+    user_movie_matrix = ratings.pivot_table(
+        index='userId',
+        columns='movieId',
+        values='rating'
+    )
+    user_movie_matrix_filled = user_movie_matrix.fillna(0)
+    user_similarity_matrix = calculate_jaccard_similarity_matrix(user_movie_matrix_filled)
+    time.sleep(5)
+    similarity_matrix_path = './Data/jaccard_similarity_matrix.csv'
+    user_similarity_df = pd.DataFrame(user_similarity_matrix, index=user_movie_matrix_filled.index, columns=user_movie_matrix_filled.index)
+    user_similarity_df.to_csv(similarity_matrix_path)
+
+# content_based_cleaner.afegir_generes()
+# content_based_cleaner.clean_empty_keywords()
+# content_based_cleaner.clean_ratings()
+# create_similarity()
+create_jaccard()
+# colaborative_cleaner.user_cleaner()
+# colaborative_cleaner.item_cleaner()
+# graph.extreure_users()
+# graph.extreure_movies()
+# graph.main()
