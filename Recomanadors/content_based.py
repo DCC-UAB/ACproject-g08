@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-import time 
+import time
+from extreure_metadata import *
 
 def rate_usuari(df, user = 1):
     #Retorna els IDs de totes les películes que l'usuari ha donat rating
@@ -67,17 +68,23 @@ def content_recommend(ratings, keywords, user, num):
     a = list(item[1] for item in p_item)
     mini = min(a)
     maxi = max(a)
-    final = []
+    normalitzat = []
+    final =  []
     for peli, puntuacio in p_item:
-        normalitzat = (puntuacio - mini) / (maxi - mini) * 5
-        final.append([peli, normalitzat])
+        # Comentaris utilitzats per a la normalització
+        # normalitzat = (puntuacio - mini) / (maxi - mini) * 5
+        # normalitzat.append([peli, normalitzat])
+        final.append(peli)
+    metadata = pd.read_csv('./Data/movies_metadata.csv')
+    f2 = movie_finder(final, metadata, num)
+
 
     # recommendations = []
     # for i in range(num):
     #     recommendations.append(p_key[i])
     # return recommendations
 
-    return final[:num]
+    return f2
 
 def content_recommend_basic(ratings, keywords, user, num):
     # ratings -> df amb els ratings
@@ -115,17 +122,23 @@ def content_recommend_basic(ratings, keywords, user, num):
     a = list(item[1] for item in p_item)
     mini = min(a)
     maxi = max(a)
-    final = []
+    normalitzat = []
+    final =  []
     for peli, puntuacio in p_item:
-        normalitzat = (puntuacio - mini) / (maxi - mini) * 5
-        final.append([peli, normalitzat])
+        # Comentaris utilitzats per a la normalització
+        # normalitzat = (puntuacio - mini) / (maxi - mini) * 5
+        # normalitzat.append([peli, normalitzat])
+        final.append(peli)
+    metadata = pd.read_csv('./Data/movies_metadata.csv')
+    f2 = movie_finder(final, metadata, num)
+
 
     # recommendations = []
     # for i in range(num):
     #     recommendations.append(p_key[i])
     # return recommendations
 
-    return final[:num]
+    return f2
 
 def content_recommend_genres(ratings, keywords, user, num):
     # ratings -> df amb els ratings
@@ -169,17 +182,23 @@ def content_recommend_genres(ratings, keywords, user, num):
     a = list(item[1] for item in p_item)
     mini = min(a)
     maxi = max(a)
-    final = []
+    normalitzat = []
+    final =  []
     for peli, puntuacio in p_item:
-        normalitzat = (puntuacio - mini) / (maxi - mini) * 5
-        final.append([peli, normalitzat])
+        # Comentaris utilitzats per a la normalització
+        # normalitzat = (puntuacio - mini) / (maxi - mini) * 5
+        # normalitzat.append([peli, normalitzat])
+        final.append(peli)
+    metadata = pd.read_csv('./Data/movies_metadata.csv')
+    f2 = movie_finder(final, metadata, num)
+
 
     # recommendations = []
     # for i in range(num):
     #     recommendations.append(p_key[i])
     # return recommendations
 
-    return final[:num]
+    return f2
 
 def content_recommend_genres_basic(ratings, keywords, user, num):
     # ratings -> df amb els ratings
@@ -224,17 +243,24 @@ def content_recommend_genres_basic(ratings, keywords, user, num):
     a = list(item[1] for item in p_item)
     mini = min(a)
     maxi = max(a)
-    final = []
+    normalitzat = []
+    final =  []
     for peli, puntuacio in p_item:
-        normalitzat = (puntuacio - mini) / (maxi - mini) * 5
-        final.append([peli, normalitzat])
+        # Comentaris utilitzats per a la normalització
+        # normalitzat = (puntuacio - mini) / (maxi - mini) * 5
+        # normalitzat.append([peli, normalitzat])
+        final.append(peli)
+    
+    metadata = pd.read_csv('./Data/movies_metadata.csv')
+    f2 = movie_finder(final, metadata, num)
+
 
     # recommendations = []
     # for i in range(num):
     #     recommendations.append(p_key[i])
     # return recommendations
 
-    return final[:num]
+    return f2
 
 def main_content():
     # u = 0
@@ -252,26 +278,28 @@ def main_content():
 
     df1 = pd.read_csv('./Data/content_ratings.csv')
     df2 = pd.read_csv('./Data/content_keywords.csv')
+    metadata = pd.read_csv('./Data/movies_metadata.csv')
     if opcio == 1:
         final = content_recommend(df1, df2, u, n)
-        print(final)
+        metadata_extractor(final, metadata)
     # user 1 -> [44284, 52856, 11017, 218473, 23637]
     # user 2 -> [604, 52587, 24100, 251797, 433878]
     elif opcio == 2:
         final = content_recommend_basic(df1, df2, u, n)
-        print(final)
+        metadata_extractor(final, metadata)
     # user 1 -> [44284, 52856, 11017, 218473, 23637]
     # user 2 -> [604, 251797, 433878, 52587, 31586]
     elif opcio == 3:
         final = content_recommend_genres(df1, df2, u, n)
-        print(final)
+        metadata_extractor(final, metadata)
     # user 1 -> [44284, 213917, 124676, 41240, 124843]
     # user 2 -> [604, 14886, 9684, 31208, 308084]
     elif opcio == 4:
         final = content_recommend_genres_basic(df1, df2, u, n)
+        metadata_extractor(final, metadata)
     # user 1 -> [44284, 213917, 124676, 41240, 124843]
     # user 2 -> [604, 285, 22, 17745, 1865]
-    print(final)
+    #print(final)
 
 if __name__ == "__main__":
     main_content()
