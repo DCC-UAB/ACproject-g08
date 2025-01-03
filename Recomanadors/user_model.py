@@ -12,7 +12,8 @@ def compute_user_similarity(user_movie_matrix):
 
 # Variance weights
 def compute_variance_weights(user_movie_matrix):
-    return user_movie_matrix.var(axis=0).apply(np.log1p)
+    temp_matrix = user_movie_matrix.replace(0, np.nan)
+    return temp_matrix.var(axis=0).apply(np.log1p)
 
 # Predict single movie rating
 def predict_single_movie(user_id, movie_id, user_movie_matrix, user_similarity_matrix, jaccard_similarity_matrix, variance_weights, regularization=1e-3, similarity_threshold=0.75):
